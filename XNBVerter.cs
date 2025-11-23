@@ -1,13 +1,13 @@
 ﻿using System.Diagnostics;
 
-class XNBVerter
+sealed class XNBVerter
 {
     static void Main(string[] args)
     {
         Console.WriteLine("XNBVerter 1.0.0\n");
 
-        int[] tasks = { };
-        string[] filePaths = { };
+        int[] tasks = [];
+        string[] filePaths = [];
 
         var allFileTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -30,7 +30,7 @@ class XNBVerter
                     {
                         if (args[prevArgIndex + 1] == "song" && !tasks.Contains(1))
                         {
-                            tasks = tasks.Append(1).ToArray();
+                            tasks = [.. tasks, 1];
                         }
                         else break;
                     }
@@ -39,7 +39,7 @@ class XNBVerter
                 {
                     if (allFileTypes.Contains(Path.GetExtension(arg)))
                     {
-                        filePaths = filePaths.Append(arg).ToArray();
+                        filePaths = [.. filePaths, arg];
                     }
                 }
             }
@@ -59,7 +59,7 @@ class XNBVerter
                 inputNumber = Console.ReadLine();
                 int.TryParse(inputNumber, out optionNumber);
             }
-            if (optionNumber == 1) tasks = tasks.Append(1).ToArray();
+            if (optionNumber == 1) tasks = [.. tasks, 1];
             goto DoTasks;
         }
         else
@@ -72,78 +72,74 @@ class XNBVerter
             return;
         }
 
-        DoTasks:
-            Console.Clear();
-            foreach (int task in tasks)
+    DoTasks:
+        Console.Clear();
+        foreach (int task in tasks)
+        {
+            if (task == 1)
             {
-                if (task == 1)
+                foreach (string filePath in filePaths)
                 {
-                    foreach (string filePath in filePaths)
+                    if (songFileTypes.Contains(Path.GetExtension(filePath)))
                     {
-                        if (songFileTypes.Contains(Path.GetExtension(filePath)))
-                        {
-                            Console.WriteLine($"Creating a Song XNB for {Path.GetFileName(filePath)}.");
-                            Console.WriteLine(CreateSongXnb(filePath));
-                        }
+                        Console.WriteLine($"Creating a Song XNB for {Path.GetFileName(filePath)}.");
+                        Console.WriteLine(CreateSongXnb(filePath));
                     }
                 }
             }
-            Console.ReadKey(true);
-            return;
+        }
+        Console.ReadKey(true);
+        return;
     }
 
     static string CreateSongXnb(string inputFile)
     {
-        using(var file = File.Create(Path.ChangeExtension(inputFile, "xnb")))
+        using (var file = File.Create(Path.ChangeExtension(inputFile, "xnb")))
         {
-            using(var file_writer = new BinaryWriter(file))
-            {
-                file_writer.Write("XNB".ToCharArray()); // Format indetifier
-                file_writer.Write("w".ToCharArray()); // Target platform
-                file_writer.Write((byte)5); // XNB format version
-                file_writer.Write((byte)0); // Flag bits
-                file_writer.Write(Path.GetFileName(inputFile).Length + 114); // File size
-                file_writer.Write7BitEncodedInt(2); // Type reader count
-                file_writer.Write("Microsoft.Xna.Framework.Content.SongReader"); // Type reader name
-                file_writer.Write(0); // Reader version number
-                file_writer.Write("Microsoft.Xna.Framework.Content.Int32Reader"); // Primary asset data?
-                file_writer.Write(0); // I don't know what these are
-                file_writer.Write((byte)0); // But it works so
-                file_writer.Write((byte)1); // I'm fine with it
-                file_writer.Write(Path.GetFileName(inputFile)); // Streaming filename
-                file_writer.Write((byte)2); // Int32 Object ID?
+            using var file_writer = new BinaryWriter(file);
+            file_writer.Write("XNB".ToCharArray()); // Format indetifier
+            file_writer.Write("w".ToCharArray()); // Target platform
+            file_writer.Write((byte)5); // XNB format version
+            file_writer.Write((byte)0); // Flag bits
+            file_writer.Write(Path.GetFileName(inputFile).Length + 114); // File size
+            file_writer.Write7BitEncodedInt(2); // Type reader count
+            file_writer.Write("Microsoft.Xna.Framework.Content.SongReader"); // Type reader name
+            file_writer.Write(0); // Reader version number
+            file_writer.Write("Microsoft.Xna.Framework.Content.Int32Reader"); // Primary asset data?
+            file_writer.Write(0); // I don't know what these are
+            file_writer.Write((byte)0); // But it works so
+            file_writer.Write((byte)1); // I'm fine with it
+            file_writer.Write(Path.GetFileName(inputFile)); // Streaming filename
+            file_writer.Write((byte)2); // Int32 Object ID?
 
-                int duration = 0;
-                string currentDir = Path.GetDirectoryName(Environment.ProcessPath);
-                if (File.Exists(Path.Join(currentDir, "ffprobe.exe")) || File.Exists(Path.Join(currentDir, "ffprobe")))
-                {
-                    using (Process ffprobe = new Process())
-                    {
-                        ffprobe.StartInfo.FileName = Path.Join(currentDir, "ffprobe");
-                        ffprobe.StartInfo.Arguments = $"-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"{inputFile}\"";
-                        ffprobe.StartInfo.RedirectStandardOutput = true;
-                        ffprobe.StartInfo.UseShellExecute = false;
-                        ffprobe.StartInfo.CreateNoWindow = true;
-                        ffprobe.Start();
-                        
-                        var output = ffprobe.StandardOutput.ReadToEnd();
-                        ffprobe.WaitForExit();
-                        if (output != null) duration = (int)Math.Round(decimal.Parse(output) * (decimal)1000);
-                    }
-                }
-                else
-                {
-                    int realNumber = 0;
-                    string inputNumber = "";
-                    while (!int.TryParse(inputNumber, out realNumber))
-                    {
-                        Console.Clear();
-                        Console.WriteLine($"Enter the duration of {inputFile} in milliseconds.");
-                        inputNumber = Console.ReadLine();
-                    }
-                }
-                file_writer.Write(duration); // Duration in milliseconds
+            int duration = 0;
+            string currentDir = Path.GetDirectoryName(Environment.ProcessPath);
+            if (File.Exists(Path.Join(currentDir, "ffprobe.exe")) || File.Exists(Path.Join(currentDir, "ffprobe")))
+            {
+                using Process ffprobe = new();
+                ffprobe.StartInfo.FileName = Path.Join(currentDir, "ffprobe");
+                ffprobe.StartInfo.Arguments = $"-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"{inputFile}\"";
+                ffprobe.StartInfo.RedirectStandardOutput = true;
+                ffprobe.StartInfo.UseShellExecute = false;
+                ffprobe.StartInfo.CreateNoWindow = true;
+                ffprobe.Start();
+
+                var output = ffprobe.StandardOutput.ReadToEnd();
+                ffprobe.WaitForExit();
+                if (output != null) duration = (int)Math.Round(decimal.Parse(output) * 1000);
             }
+            else
+            {
+                int realNumber = 0;
+                string inputNumber = "";
+                while (!int.TryParse(inputNumber, out realNumber))
+                {
+                    Console.Clear();
+                    Console.WriteLine($"Enter the duration of {inputFile} in milliseconds.");
+                    inputNumber = Console.ReadLine();
+                }
+            }
+            file_writer.Write(duration); // Duration in milliseconds
         }
         if (File.Exists(Path.ChangeExtension(inputFile, "xnb")))
         {
