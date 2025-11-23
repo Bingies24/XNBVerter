@@ -50,19 +50,22 @@ if (tasks.Length > 0)
 }
 else if (filePaths.Length > 0)
 {
-    int optionNumber = 0;
-    string inputNumber;
-    while (optionNumber != 1)
+    if (!Console.IsOutputRedirected)
     {
-        Console.Clear();
-        Console.WriteLine("Enter your option and press Enter/Return:");
-        Console.WriteLine("1. Create Song .XNB");
-        inputNumber = Console.ReadLine();
-        _ = int.TryParse(inputNumber, out optionNumber);
-    }
-    if (optionNumber == 1)
-    {
-        tasks = [.. tasks, 1];
+        int optionNumber = 0;
+        string inputNumber;
+        while (optionNumber != 1)
+        {
+            Console.Clear();
+            Console.WriteLine("Enter your option and press Enter/Return:");
+            Console.WriteLine("1. Create Song .XNB");
+            inputNumber = Console.ReadLine();
+            _ = int.TryParse(inputNumber, out optionNumber);
+        }
+        if (optionNumber == 1)
+        {
+            tasks = [.. tasks, 1];
+        }
     }
 
     goto DoTasks;
@@ -72,13 +75,20 @@ else
     Console.WriteLine("You can drag and drop files or use the command line. If no options are set UI mode will be used.");
     Console.WriteLine("XNBVerter INPUT_FILE [OPTIONS]\nYou may have input files and options wherever you want, but this formatting is recommended.");
     Console.WriteLine("    -output_type        Sets the output type your input files should use.");
-    Console.WriteLine("        song            Creates a Song XNB for .wav, .mp3, .ogg or .wma files.\n                        If ffprobe is not found you will have to enter the length of the audio files manually.");
-    _ = Console.ReadKey(true);
+    Console.WriteLine("        song            Creates a Song XNB for .wav, .mp3, .ogg or .wma files.");
+    Console.WriteLine("                        If ffprobe is not found you will have to enter the length of the audio files manually.");
+    if (!Console.IsOutputRedirected)
+    {
+        _ = Console.ReadKey(true);
+    }
     return;
 }
 
 DoTasks:
-Console.Clear();
+if (!Console.IsOutputRedirected)
+{
+    Console.Clear();
+}
 foreach (int task in tasks)
 {
     if (task == 1)
@@ -93,7 +103,10 @@ foreach (int task in tasks)
         }
     }
 }
-Console.ReadKey(true);
+if (!Console.IsOutputRedirected)
+{
+    Console.ReadKey(true);
+}
 return;
 
 static string CreateSongXnb(string inputFile)
@@ -137,13 +150,16 @@ static string CreateSongXnb(string inputFile)
         }
         else
         {
-            int realNumber = 0;
-            string inputNumber = "";
-            while (!int.TryParse(inputNumber, out realNumber))
+            if (!Console.IsOutputRedirected) // Add exception throw using else
             {
-                Console.Clear();
-                Console.WriteLine($"Enter the duration of {inputFile} in milliseconds.");
-                inputNumber = Console.ReadLine();
+                int realNumber = 0;
+                string inputNumber = "";
+                while (!int.TryParse(inputNumber, out realNumber))
+                {
+                    Console.Clear();
+                    Console.WriteLine($"Enter the duration of {inputFile} in milliseconds.");
+                    inputNumber = Console.ReadLine();
+                }
             }
         }
         file_writer.Write(duration); // Duration in milliseconds
