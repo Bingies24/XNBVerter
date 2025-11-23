@@ -105,7 +105,7 @@ foreach (int task in tasks)
 }
 if (!Console.IsOutputRedirected)
 {
-    Console.ReadKey(true);
+    _ = Console.ReadKey(true);
 }
 return;
 
