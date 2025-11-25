@@ -2,8 +2,16 @@ using XNBVerter.Core;
 
 namespace XNBVerter.Cli
 {
+    /// <summary>
+    /// Provides interactive console prompts used when running XNBVerter
+    /// in non-automated mode.
+    /// </summary>
     internal static class UserPrompts
     {
+        /// <summary>
+        /// Displays a menu asking the user which task they want to perform
+        /// and waits until a valid option is provided.
+        /// </summary>
         public static TaskType AskTask()
         {
             int optionNumber = 0;
@@ -22,6 +30,10 @@ namespace XNBVerter.Cli
             return TaskType.Song;
         }
 
+        /// <summary>
+        /// Prompts the user to manually enter the duration of an audio file
+        /// in milliseconds, validating that the input is a non-negative integer.
+        /// </summary>
         public static int AskDurationMs(string inputFile)
         {
             while (true)
