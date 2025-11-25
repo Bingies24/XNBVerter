@@ -1,5 +1,9 @@
 namespace XNBVerter.Cli
 {
+    /// <summary>
+    /// Provides helper methods for displaying usage information
+    /// and command-line instructions for the XNBVerter CLI.
+    /// </summary>
     internal static class HelpPrinter
     {
         public static void ShowUsage()
