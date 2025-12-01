@@ -21,42 +21,44 @@ namespace XNBVerter.Cli
             {
                 string arg = args[i];
 
-                if (string.Equals(arg, "-ot", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(arg, "--output-type", StringComparison.OrdinalIgnoreCase))
+                switch (arg.ToLowerInvariant())
                 {
-                    if (i + 1 >= args.Length)
-                    {
-                        return new ParseResult("Missing value after --output-type");
-                    }
+                    case "-ot":
+                    case "--output-type":
+                        if (i + 1 >= args.Length)
+                        {
+                            return new ParseResult("Missing value after --output-type");
+                        }
 
-                    string value = args[++i];
+                        string value = args[++i];
 
-                    if (string.Equals(value, "song", StringComparison.OrdinalIgnoreCase))
-                    {
-                        task = TaskType.Song;
-                    }
-                    else
-                    {
-                        return new ParseResult($"Unknown output type: {value}");
-                    }
+                        switch (value.ToLowerInvariant())
+                        {
+                            case "song":
+                                task = TaskType.Song;
+                                break;
 
-                    continue;
-                }
+                            default:
+                                return new ParseResult($"Unknown output type: {value}");
+                        }
+                        break;
 
-                if (arg.StartsWith('-'))
-                {
-                    return new ParseResult($"Unknown option: {arg}");
-                }
+                    default:
+                        if (arg.StartsWith('-'))
+                        {
+                            return new ParseResult($"Unknown option: {arg}");
+                        }
 
-
-                // Anything else might be a file path
-                if (File.Exists(arg))
-                {
-                    string ext = Path.GetExtension(arg);
-                    if (FileTypes.AllFileTypes.Contains(ext))
-                    {
-                        files.Add(Path.GetFullPath(arg));
-                    }
+                        // Anything else might be a file path
+                        if (File.Exists(arg))
+                        {
+                            string ext = Path.GetExtension(arg);
+                            if (FileTypes.AllFileTypes.Contains(ext))
+                            {
+                                files.Add(Path.GetFullPath(arg));
+                            }
+                        }
+                        break;
                 }
             }
 
