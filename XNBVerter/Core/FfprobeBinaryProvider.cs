@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 using FFMpegCore;
 using FFMpegCore.Extensions.Downloader;
 using FFMpegCore.Extensions.Downloader.Enums;
@@ -191,7 +193,7 @@ namespace XNBVerter.Core
         {
             try
             {
-                using System.Diagnostics.Process process = new();
+                using Process process = new();
                 process.StartInfo.FileName = "ffprobe";
                 process.StartInfo.Arguments = "-version";
                 process.StartInfo.RedirectStandardOutput = true;
