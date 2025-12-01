@@ -23,8 +23,8 @@ namespace XNBVerter.Cli
             Console.WriteLine();
             Console.WriteLine("      Valid types:");
             Console.WriteLine("        song    Creates a Song XNB for .wav, .mp3, .ogg or .wma files.");
-            Console.WriteLine("                If ffprobe is not found, you will have to enter the");
-            Console.WriteLine("                length of the audio files manually.");
+            Console.WriteLine("                If ffprobe is not found, you will be prompted to download it,");
+            Console.WriteLine("                or enter length of the audio files manually.");
             Console.WriteLine();
         }
     }
