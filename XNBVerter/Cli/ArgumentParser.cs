@@ -7,6 +7,26 @@ namespace XNBVerter.Cli
     /// </summary>
     internal sealed class ArgumentParser
     {
+        /// <summary>
+        /// Checks if a value exists after the current argument.
+        /// </summary>
+        /// <param name="args">The arguments array.</param>
+        /// <param name="currentIndex">The current argument index.</param>
+        /// <param name="optionName">The name of the option that requires a value.</param>
+        /// <param name="result">The error result if no value is found.</param>
+        /// <returns>True if a value exists, false otherwise.</returns>
+        private static bool TryGetNextValue(string[] args, int currentIndex, string optionName, out ParseResult? result)
+        {
+            if (currentIndex + 1 >= args.Length)
+            {
+                result = new ParseResult($"Missing value after {optionName}");
+                return false;
+            }
+
+            result = null;
+            return true;
+        }
+
         public static ParseResult Parse(string[] args)
         {
             List<string> files = [];
@@ -25,9 +45,9 @@ namespace XNBVerter.Cli
                 {
                     case "-ot":
                     case "--output-type":
-                        if (i + 1 >= args.Length)
+                        if (!TryGetNextValue(args, i, arg, out ParseResult? error))
                         {
-                            return new ParseResult("Missing value after --output-type");
+                            return error!;
                         }
 
                         string value = args[++i];
