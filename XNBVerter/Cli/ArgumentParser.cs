@@ -21,22 +21,33 @@ namespace XNBVerter.Cli
             {
                 string arg = args[i];
 
-                if (string.Equals(arg, "-ot", StringComparison.OrdinalIgnoreCase) || string.Equals(arg, "--output-type", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(arg, "-ot", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(arg, "--output-type", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (i + 1 < args.Length)
+                    if (i + 1 >= args.Length)
                     {
-                        string value = args[i + 1];
+                        return new ParseResult("Missing value after --output-type");
+                    }
 
-                        if (string.Equals(value, "song", StringComparison.OrdinalIgnoreCase))
-                        {
-                            task = TaskType.Song;
-                        }
+                    string value = args[++i];
 
-                        i++; // skip the value
+                    if (string.Equals(value, "song", StringComparison.OrdinalIgnoreCase))
+                    {
+                        task = TaskType.Song;
+                    }
+                    else
+                    {
+                        return new ParseResult($"Unknown output type: {value}");
                     }
 
                     continue;
                 }
+
+                if (arg.StartsWith('-'))
+                {
+                    return new ParseResult($"Unknown option: {arg}");
+                }
+
 
                 // Anything else might be a file path
                 if (File.Exists(arg))

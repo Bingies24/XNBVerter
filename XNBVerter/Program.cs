@@ -23,6 +23,16 @@ namespace XNBVerter
 
             ParseResult result = ArgumentParser.Parse(args);
 
+            // Check for parsing errors first
+            if (!result.IsSuccess)
+            {
+                Console.Error.WriteLine($"Error: {result.Error}");
+                Console.WriteLine();
+                HelpPrinter.ShowUsage();
+                WaitIfInteractive();
+                return 1;
+            }
+
             // No input files at all -> show help and exit
             if (result.FilePaths.Count == 0)
             {

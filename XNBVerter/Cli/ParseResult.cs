@@ -4,20 +4,37 @@ namespace XNBVerter.Cli
 {
     /// <summary>
     /// Represents the outcome of parsing CLI arguments,
-    /// including the resolved task type and any validated file paths.
+    /// including the resolved task type, validated file paths,
+    /// and any error that occurred during parsing.
     /// </summary>
-    internal sealed class ParseResult(TaskType? task, List<string> filePaths)
+    internal sealed class ParseResult
     {
-        /// <summary>
-        /// Gets the task type determined from the parsed arguments,
-        /// or <c>null</c> if no valid task was specified.
-        /// </summary>
-        public TaskType? Task { get; } = task;
+        public TaskType? Task { get; }
+        public List<string> FilePaths { get; }
+        public string? Error { get; }
 
         /// <summary>
-        /// Gets the list of absolute file paths that were validated
-        /// and accepted as input files during parsing.
+        /// True when the parse completed successfully with no errors.
         /// </summary>
-        public List<string> FilePaths { get; } = filePaths;
+        public bool IsSuccess => Error is null;
+
+        /// <summary>
+        /// Normal successful result.
+        /// </summary>
+        public ParseResult(TaskType? task, List<string> filePaths)
+        {
+            Task = task;
+            FilePaths = filePaths;
+        }
+
+        /// <summary>
+        /// Error result (task + files ignored).
+        /// </summary>
+        public ParseResult(string errorMessage)
+        {
+            Error = errorMessage;
+            Task = null;
+            FilePaths = [];
+        }
     }
 }
