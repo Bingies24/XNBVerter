@@ -13,4 +13,9 @@
     <Version>1.0.1.1</Version>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FFMpegCore" Version="5.4.0" />
+    <PackageReference Include="FFMpegCore.Extensions.Downloader" Version="5.0.0" />
+  </ItemGroup>
+
 </Project>

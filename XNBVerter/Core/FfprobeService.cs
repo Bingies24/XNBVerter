@@ -8,9 +8,9 @@ namespace XNBVerter.Core
     /// the duration of an audio file.
     /// </summary>
     /// <remarks>
-    /// This service first checks for a local <c>ffprobe</c> executable located
-    /// in the application's directory.  
-    /// If not found, it falls back to invoking <c>ffprobe</c> from the system PATH.
+    /// This service uses <see cref="FfprobeBinaryProvider"/> to ensure <c>ffprobe</c> is available.
+    /// If <c>ffprobe</c> is not found locally or in the system PATH, it will be automatically
+    /// downloaded using FFMpegCore.
     /// </remarks>
     internal sealed class FfprobeService
     {
@@ -47,29 +47,14 @@ namespace XNBVerter.Core
 
             try
             {
-                string? processPath = Environment.ProcessPath;
-                string? currentDir = processPath is not null
-                    ? Path.GetDirectoryName(processPath)
-                    : null;
+                // Use FfprobeBinaryProvider to ensure ffprobe is available
+                string? fileName = FfprobeBinaryProvider.EnsureFfprobeAvailable();
 
-                string? localFfprobe = null;
-
-                if (!string.IsNullOrEmpty(currentDir))
+                if (fileName is null)
                 {
-                    string exePath = Path.Combine(currentDir, "ffprobe.exe");
-                    string unixPath = Path.Combine(currentDir, "ffprobe");
-
-                    if (File.Exists(exePath))
-                    {
-                        localFfprobe = exePath;
-                    }
-                    else if (File.Exists(unixPath))
-                    {
-                        localFfprobe = unixPath;
-                    }
+                    // ffprobe not found and could not be downloaded
+                    return false;
                 }
-
-                string fileName = localFfprobe ?? "ffprobe";
 
                 using Process ffprobe = new();
                 ffprobe.StartInfo.FileName = fileName;
