@@ -10,7 +10,7 @@ namespace XNBVerter
     /// </summary>
     internal static class Program
     {
-        private static Version appVersion = Assembly.GetExecutingAssembly().GetName().Version;
+        private static readonly Version appVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
         /// Main entry point for the application.
