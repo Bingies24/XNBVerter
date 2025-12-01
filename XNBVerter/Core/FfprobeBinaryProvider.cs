@@ -64,7 +64,9 @@ namespace XNBVerter.Core
                 if (isInteractive)
                 {
                     // Prompt user for confirmation in interactive mode
-                    Console.WriteLine("ffprobe is not found on your system. Would you like to download it now?");
+                    Console.WriteLine("ffprobe is not found on your system.");
+                    Console.WriteLine("This is required for automatic audio duration detection.");
+                    Console.WriteLine("Would you like to download it now?");
                     Console.Write("(Y) yes  (N) no: ");
                     string? response = Console.ReadLine()?.Trim().ToUpperInvariant();
 
