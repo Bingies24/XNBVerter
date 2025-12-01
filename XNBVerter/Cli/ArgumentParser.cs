@@ -21,7 +21,7 @@ namespace XNBVerter.Cli
             {
                 string arg = args[i];
 
-                if (string.Equals(arg, "-ot", StringComparison.OrdinalIgnoreCase) || string.Equals(arg, "--output_type", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(arg, "-ot", StringComparison.OrdinalIgnoreCase) || string.Equals(arg, "--output-type", StringComparison.OrdinalIgnoreCase))
                 {
                     if (i + 1 < args.Length)
                     {
