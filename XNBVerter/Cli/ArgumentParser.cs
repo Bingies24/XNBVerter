@@ -69,15 +69,20 @@ namespace XNBVerter.Cli
                             return new ParseResult($"Unknown option: {arg}");
                         }
 
-                        // Anything else might be a file path
-                        if (File.Exists(arg))
+                        // Anything else is treated as a file path
+                        // Check if it's a directory that exists
+                        if (Directory.Exists(arg))
                         {
-                            string ext = Path.GetExtension(arg);
-                            if (FileTypes.AllFileTypes.Contains(ext))
-                            {
-                                files.Add(Path.GetFullPath(arg));
-                            }
+                            return new ParseResult($"Expected a file, but got a directory: {arg}");
                         }
+
+                        if (!File.Exists(arg))
+                        {
+                            return new ParseResult($"File not found: {arg}");
+                        }
+
+                        // Accept any file that exists - task-specific validation happens later
+                        files.Add(Path.GetFullPath(arg));
                         break;
                 }
             }
