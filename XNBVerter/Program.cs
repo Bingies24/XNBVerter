@@ -124,6 +124,7 @@ namespace XNBVerter
             {
                 if (!FileTypes.SongFileTypes.Contains(Path.GetExtension(filePath)))
                 {
+                    Console.WriteLine($"⚠️ Skipping {Path.GetFileName(filePath)}: Not a supported song file type");
                     continue;
                 }
 
