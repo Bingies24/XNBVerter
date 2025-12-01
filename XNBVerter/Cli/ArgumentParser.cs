@@ -41,10 +41,10 @@ namespace XNBVerter.Cli
             {
                 string arg = args[i];
 
-                switch (arg.ToLowerInvariant())
+                switch (arg.ToUpperInvariant())
                 {
-                    case "-ot":
-                    case "--output-type":
+                    case "-OT":
+                    case "--OUTPUT-TYPE":
                         if (!TryGetNextValue(args, i, arg, out ParseResult? error))
                         {
                             return error!;
@@ -52,9 +52,9 @@ namespace XNBVerter.Cli
 
                         string value = args[++i];
 
-                        switch (value.ToLowerInvariant())
+                        switch (value.ToUpperInvariant())
                         {
-                            case "song":
+                            case "SONG":
                                 task = TaskType.Song;
                                 break;
 
