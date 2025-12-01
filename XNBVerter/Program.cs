@@ -19,6 +19,9 @@ namespace XNBVerter
         /// <returns>Exit code: 0 for success, 1 for failure.</returns>
         private static int Main(string[] args)
         {
+            // Enable UTF-8 encoding for emoji and extended Unicode support
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             Console.WriteLine($"XNBVerter {appVersion}\n");
 
             ParseResult result = ArgumentParser.Parse(args);
