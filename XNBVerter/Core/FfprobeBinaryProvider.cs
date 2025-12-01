@@ -68,11 +68,13 @@ namespace XNBVerter.Core
                     Console.Write("(Y) yes  (N) no: ");
                     string? response = Console.ReadLine()?.Trim().ToUpperInvariant();
 
-                    if (response is "Y" or "YES")
+                    shouldDownload = response switch
                     {
-                        shouldDownload = true;
-                    }
-                    else
+                        "Y" or "YES" => true,
+                        _ => false
+                    };
+
+                    if (!shouldDownload)
                     {
                         Console.WriteLine("Download cancelled. Please install ffprobe manually or add it to your system PATH.");
                         return null;
